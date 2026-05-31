@@ -7,7 +7,7 @@ go install go.foxforensics.dev/eventid@latest
 
 ## Usage
 ```console
-$ eventid [PROVIDER:]ID ...
+$ eventid [PROVIDER:]ID...
 ```
 
 ## Acknowledgments

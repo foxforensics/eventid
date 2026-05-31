@@ -2,7 +2,7 @@
 //
 // Usage:
 //
-//	eventid [provider:]id ...
+//	eventid [PROVIDER:]ID...
 //
 // The arguments are:
 //
@@ -18,14 +18,17 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/fatih/color"
-
 	"go.foxforensics.dev/eventid/events"
 )
 
+var Usage = `© 2026 Fox Forensics. Licensed under MIT License.
+Usage: eventid [PROVIDER:]ID...
+
+Report bugs at: foxforensics.dev/issues`
+
 func main() {
 	if len(os.Args) == 1 || os.Args[1] == "--help" {
-		_, _ = fmt.Fprintln(os.Stderr, "usage: eventid [provider:]id ...")
+		_, _ = fmt.Fprintln(os.Stderr, Usage)
 		os.Exit(2)
 	}
 
@@ -38,11 +41,9 @@ func main() {
 
 	all := slices.Sorted(maps.Keys(db))
 
-	for i, id := range os.Args[1:] {
+	for _, id := range os.Args[1:] {
 		var tag string
 		var found bool
-
-		_, _ = fmt.Println(color.HiWhiteString("=== Windows Event ID %s ===", id))
 
 		if strings.Contains(id, ":") {
 			t := strings.SplitN(id, ":", 2)
@@ -52,7 +53,7 @@ func main() {
 		n, err := strconv.ParseInt(id, 10, 32)
 
 		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "[!] %s\n\n", color.RedString(err.Error()))
+			_, _ = fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
 			continue
 		}
 
@@ -70,17 +71,13 @@ func main() {
 
 		for _, p := range keys {
 			if m, ok := db[p][n]; ok {
-				_, _ = fmt.Printf("[*] %s\n    %s \n", color.YellowString(p), color.GreenString(m))
+				_, _ = fmt.Printf("%s: %s: \"%s\"\n", id, p, m)
 				found = true
 			}
 		}
 
 		if !found {
-			_, _ = fmt.Fprintf(os.Stderr, "[!] %s\n", color.RedString("nothing found"))
-		}
-
-		if i < len(os.Args[1:])-1 {
-			_, _ = fmt.Println()
+			_, _ = fmt.Fprintf(os.Stderr, "error: %s not found\n", id)
 		}
 	}
 }
