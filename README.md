@@ -2,7 +2,7 @@
 Lookup Windows event messages by id and provider (up to Windows 10).
 
 ```console
-go install go.foxforensics.dev/eventid@latest
+go install go.foxforensics.eu/eventid@latest
 ```
 
 ## Usage

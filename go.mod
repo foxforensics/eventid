@@ -1,4 +1,4 @@
-module go.foxforensics.dev/eventid
+module go.foxforensics.eu/eventid
 
 go 1.26
 

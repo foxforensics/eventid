@@ -18,13 +18,13 @@ import (
 	"strconv"
 	"strings"
 
-	"go.foxforensics.dev/eventid/events"
+	"go.foxforensics.eu/eventid/events"
 )
 
 var Usage = `© 2026 Fox Forensics. Licensed under MIT License.
 Usage: eventid [PROVIDER:]ID...
 
-Report bugs at: foxforensics.dev/issues`
+Report bugs at: foxforensics.eu/issues`
 
 func main() {
 	if len(os.Args) == 1 || os.Args[1] == "--help" {
