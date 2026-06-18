@@ -32,52 +32,54 @@ func main() {
 		os.Exit(2)
 	}
 
-	db, err := events.Load()
+	db, err := events.Get()
 
 	if err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, err)
+		_, _ = fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
 
 	all := slices.Sorted(maps.Keys(db))
 
 	for _, id := range os.Args[1:] {
-		var tag string
+		var part string
 		var found bool
 
 		if strings.Contains(id, ":") {
 			t := strings.SplitN(id, ":", 2)
-			tag, id = t[0], t[1]
+			part, id = t[0], t[1]
 		}
 
-		n, err := strconv.ParseInt(id, 10, 32)
+		n, err := strconv.ParseInt(id, 10, 64)
 
 		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
+			_, _ = fmt.Fprintln(os.Stderr, err.Error())
 			continue
 		}
 
-		keys := all
+		providers := all
 
-		if len(tag) > 0 {
-			keys = keys[:0]
-
-			for _, k := range all {
-				if strings.Contains(k, tag) {
-					keys = append(keys, k)
+		// reduce providers
+		if len(part) > 0 {
+			providers = providers[:0]
+			for _, p := range all {
+				if strings.Contains(p, part) {
+					providers = append(providers, p)
 				}
 			}
 		}
 
-		for _, p := range keys {
+		// search remaining providers
+		for _, p := range providers {
 			if m, ok := db[p][n]; ok {
 				_, _ = fmt.Printf("%s: %s: \"%s\"\n", id, p, m)
 				found = true
 			}
 		}
 
+		// nothing found
 		if !found {
-			_, _ = fmt.Fprintf(os.Stderr, "error: %s not found\n", id)
+			_, _ = fmt.Fprintf(os.Stderr, "%s not found\n", id)
 		}
 	}
 }
